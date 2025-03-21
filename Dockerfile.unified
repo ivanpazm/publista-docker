@@ -1,0 +1,31 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Instalar Node.js 18.x en la imagen de Python
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    lsb-release \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Verificar instalaciones
+RUN python --version && node --version && npm --version
+
+# Copiar los archivos del proyecto
+COPY . .
+
+# Instalar dependencias de Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Instalar dependencias de Node.js si existe package.json
+RUN if [ -f package.json ]; then npm install; fi
+
+# Exponer puertos para Python y Node.js
+EXPOSE 5000 3000
+
+# Mantener el contenedor activo
+CMD ["sh", "-c", "echo 'Contenedor unificado Python 3.9 + Node.js 18 activo y esperando comandos...' && sleep infinity"]
