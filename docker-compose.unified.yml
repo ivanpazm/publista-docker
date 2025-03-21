@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  unified-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.unified
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"  # Puerto para Python/Flask
+      - "9000:3000"  # Puerto para Node.js (mapeado a 9000)
+    restart: unless-stopped
+    container_name: publista-unified
